@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day Planner</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero reveal">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">PLAN • TRACK • COMPLETE</p>
+          <h1>Build a better day.</h1>
+          <p class="hero-text">
+            Add tasks, track progress, keep urgent work visible, and build a calm rhythm around your goals.
+          </p>
+          <div class="hero-actions">
+            <button type="button" class="primary-btn" id="quick-add-cta">Quick add focus task</button>
+            <button type="button" class="secondary-btn" id="jump-to-view">Open plan board</button>
+          </div>
+        </div>
+        <div class="summary-card reveal">
+          <div class="summary-stat">
+            <span id="task-count">0</span>
+            <small>tasks</small>
+          </div>
+          <div class="summary-stat">
+            <span id="done-count">0</span>
+            <small>done</small>
+          </div>
+          <div class="summary-stat">
+            <span id="urgent-count">0</span>
+            <small>urgent</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel top-band reveal">
+        <div class="focus-row">
+          <div class="focus-card reveal">
+            <p class="mini-label">Focus streak</p>
+            <div id="streak-count" class="focus-value">0</div>
+            <p class="focus-caption">days in a row</p>
+          </div>
+          <div class="focus-card accent reveal">
+            <p class="mini-label">Today</p>
+            <div id="today-progress" class="focus-value">0%</div>
+            <p class="focus-caption">completed</p>
+          </div>
+          <div class="focus-card">
+            <p class="mini-label">Next up</p>
+            <div id="next-task" class="focus-value">—</div>
+            <p class="focus-caption">urgent or due soon</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel tabs-panel reveal">
+        <div class="tabs" role="tablist" aria-label="Planner tabs">
+          <button class="tab-btn active" data-tab="add" role="tab" aria-selected="true">Add Plan</button>
+          <button class="tab-btn" data-tab="view" role="tab" aria-selected="false">View Plans</button>
+          <button class="tab-btn" data-tab="insights" role="tab" aria-selected="false">Insights</button>
+          <button class="tab-btn" data-tab="data" role="tab" aria-selected="false">Data</button>
+        </div>
+
+        <div class="tab-content active" id="tab-add" role="tabpanel">
+          <form id="planner-form">
+            <div class="field-group">
+              <label for="title">Task or plan</label>
+              <input id="title" name="title" type="text" placeholder="Write your plan" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="date">Date</label>
+                <input id="date" name="date" type="date" required />
+              </div>
+              <div class="field-group">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                  <option value="General">General</option>
+                  <option value="Work">Work</option>
+                  <option value="Study">Study</option>
+                  <option value="Health">Health</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Chores">Chores</option>
+                </select>
+              </div>
+              <div class="field-group checkbox-group">
+                <label for="urgent">Urgent</label>
+                <input id="urgent" name="urgent" type="checkbox" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="tags">Tags</label>
+              <input id="tags" name="tags" type="text" placeholder="work, deep-focus" />
+            </div>
+
+            <div class="field-group">
+              <label for="notes">Notes</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Add details or steps"></textarea>
+            </div>
+
+            <div class="quick-add-row">
+              <span class="mini-label">Quick add</span>
+              <button type="button" class="quick-add-btn" data-title="Write one focused note" data-category="Study">Study sprint</button>
+              <button type="button" class="quick-add-btn" data-title="Workout" data-category="Health">Workout</button>
+              <button type="button" class="quick-add-btn" data-title="Follow up on work" data-category="Work">Work follow-up</button>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="primary-btn">Add task</button>
+            </div>
+          </form>
+          <div id="motivation-banner" class="motivation-banner hidden"></div>
+        </div>
+
+        <div class="tab-content" id="tab-view" role="tabpanel">
+          <div class="view-toolbar">
+            <input id="search-input" type="search" placeholder="Search tasks" />
+            <select id="filter-select">
+              <option value="all">All tasks</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+              <option value="urgent">Urgent</option>
+            </select>
+            <select id="sort-select">
+              <option value="date">Sort by date</option>
+              <option value="urgent">Sort by urgency</option>
+              <option value="status">Sort by status</option>
+            </select>
+            <div class="view-toggle">
+              <button type="button" class="secondary-btn active" data-view="table">Table</button>
+              <button type="button" class="secondary-btn" data-view="calendar">Calendar</button>
+            </div>
+          </div>
+          <div class="view-surface active" id="table-view">
+            <div class="table-wrap">
+              <table class="task-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Task</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="task-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="view-surface" id="calendar-view">
+            <div class="calendar-toolbar">
+              <div class="calendar-nav">
+                <button type="button" class="secondary-btn calendar-nav-btn" data-calendar-nav="prev-year">«</button>
+                <button type="button" class="secondary-btn calendar-nav-btn" data-calendar-nav="prev-month">‹</button>
+                <div id="calendar-month-label" class="calendar-month-label"></div>
+                <button type="button" class="secondary-btn calendar-nav-btn" data-calendar-nav="next-month">›</button>
+                <button type="button" class="secondary-btn calendar-nav-btn" data-calendar-nav="next-year">»</button>
+              </div>
+              <button type="button" class="secondary-btn" id="calendar-today-btn">Today</button>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+            <div id="calendar-detail" class="calendar-detail"></div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-insights" role="tabpanel">
+          <div class="insights-grid">
+            <div class="insight-card reveal">
+              <h3>Weekly momentum</h3>
+              <div id="weekly-bars" class="weekly-bars"></div>
+            </div>
+            <div class="insight-card reveal">
+              <h3>Focus timer</h3>
+              <div id="timer-display" class="timer-display">25:00</div>
+              <div class="actions">
+                <button type="button" id="start-timer" class="primary-btn">Start</button>
+                <button type="button" id="pause-timer" class="secondary-btn">Pause</button>
+                <button type="button" id="reset-timer" class="secondary-btn">Reset</button>
+              </div>
+            </div>
+            <div class="insight-card reveal">
+              <h3>Upcoming focus</h3>
+              <ul id="upcoming-list" class="upcoming-list"></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-data" role="tabpanel">
+          <div class="data-card reveal">
+            <h2>Save or load your JSON data</h2>
+            <p>Your planner auto-saves locally, and you can export or import a JSON backup anytime.</p>
+            <div class="actions">
+              <label class="secondary-btn file-btn" for="import-json">Import JSON</label>
+              <input id="import-json" type="file" accept="application/json" hidden />
+              <button type="button" id="export-btn" class="secondary-btn">Export JSON</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p id="status-message" class="status-message" aria-live="polite"></p>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
